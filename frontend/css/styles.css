@@ -167,10 +167,9 @@ body {
 
 .btn-ghost {
     width: 100%;
-    margin-top: 8px;
-    background: transparent;
+    background: blue;
     border: 1px solid var(--card-border);
-    color: var(--muted);
+    color: white;
     padding: 11px;
 }
 
