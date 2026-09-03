@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ayuda Memoria — ToDo App</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: A4; margin: 14mm 12mm; }
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #F6F1E3;
+        color: #26382E;
+        font-size: 15px;
+        line-height: 1.45;
+    }
+    .page { max-width: 190mm; margin: 0 auto; }
+
+    /* ---------- Portada / header ---------- */
+    .hero {
+        background: #2F4A3A;
+        color: #F6EFE0;
+        border-radius: 16px;
+        padding: 26px 28px;
+        margin-bottom: 18px;
+    }
+    .hero h1 { font-size: 40px; letter-spacing: 1px; }
+    .hero .sub { font-size: 17px; opacity: 0.85; margin-top: 4px; }
+    .hero .chips { margin-top: 12px; }
+    .hero .chip {
+        display: inline-block;
+        background: rgba(255,255,255,0.15);
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: 13px;
+        margin: 2px 4px 2px 0;
+    }
+
+    /* ---------- Tarjetas ---------- */
+    .card {
+        background: #FFFFFF;
+        border: 2px solid #E3D7BE;
+        border-radius: 14px;
+        padding: 16px 20px 14px;
+        margin-bottom: 14px;
+        page-break-inside: avoid;
+    }
+    .card h2 {
+        font-size: 21px;
+        border-bottom: 3px solid #B08A3E;
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+        color: #2F4A3A;
+    }
+    .card h3 { font-size: 16px; color: #2F4A3A; margin: 10px 0 4px; }
+
+    /* ---------- Diagrama capas ---------- */
+    .capas { display: flex; gap: 8px; align-items: stretch; text-align: center; margin: 8px 0; }
+    .capa {
+        flex: 1;
+        border-radius: 12px;
+        padding: 12px 8px;
+        font-size: 14px;
+    }
+    .capa b { display: block; font-size: 18px; margin-bottom: 4px; }
+    .front { background: #C7DFEA; color: #1D4E5E; }
+    .back  { background: #B2D3B7; color: #1F4A2A; }
+    .bd    { background: #E6DAC0; color: #5C4E22; }
+    .flecha { text-align: center; font-size: 16px; margin: 2px 0; }
+
+    /* ---------- Tablas ---------- */
+    table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+    th {
+        background: #2F4A3A; color: #F6EFE0;
+        padding: 8px 10px; text-align: left; font-size: 14px;
+    }
+    td { border-bottom: 1px solid #E3D7BE; padding: 7px 10px; font-size: 14px; }
+    tr:nth-child(even) td { background: #FAF6EA; }
+    td b { color: #2F4A3A; }
+
+    /* ---------- Destacados ---------- */
+    .ok { color: #1F7A3D; font-weight: 700; }
+    .ojo { color: #C0392B; font-weight: 700; }
+    .resaltar {
+        background: #FFF4D6;
+        border-left: 5px solid #B08A3E;
+        padding: 8px 12px;
+        border-radius: 0 10px 10px 0;
+        margin: 8px 0;
+        font-size: 15px;
+    }
+    .dos-col { display: flex; gap: 12px; }
+    .dos-col > div { flex: 1; }
+    .cajita {
+        background: #FAF6EA;
+        border: 2px dashed #B08A3E;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-family: Consolas, monospace;
+        font-size: 14px;
+        margin: 6px 0;
+    }
+    .lista li { margin: 5px 0 5px 18px; }
+    ul.lista { padding-left: 4px; }
+
+    .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #8B8471;
+        margin-top: 16px;
+    }
+</style>
+</head>
+<body>
+<div class="page">
+
+    <!-- ================= PORTADA ================= -->
+    <div class="hero">
+        <h1>📌 AYUDA MEMORIA</h1>
+        <div class="sub">Todo lo macro de la app ToDo en 3 capas — para repasar antes de la clase con Leo</div>
+        <div class="chips">
+            <span class="chip">Frontend</span><span class="chip">Backend</span>
+            <span class="chip">Base de datos</span><span class="chip">API REST</span>
+            <span class="chip">CRUD</span><span class="chip">JSON</span>
+        </div>
+    </div>
+
+    <!-- ================= 1. LAS 3 CAPAS ================= -->
+    <div class="card">
+        <h2>1 · Las 3 capas de la app</h2>
+        <div class="capas">
+            <div class="capa front"><b>FRONTEND</b>lo que el usuario <b>VE</b><br>HTML + CSS + JS vanilla<br>(1 pantalla, sin login)</div>
+            <div class="capa back"><b>BACKEND</b>la <b>LÓGICA</b><br>recibe, calcula, guarda<br>Express + API REST</div>
+            <div class="capa bd"><b>BASE DE DATOS</b>la <b>MEMORIA</b><br>SQLite local<br>archivo tareas.db</div>
+        </div>
+        <div class="flecha">🔽 El frontend NUNCA toca la base de datos 🔽</div>
+        <div class="resaltar"><b>Regla de oro:</b> Front = lo que ves · Back = lo que piensa · BD = lo que recuerda.</div>
+    </div>
+
+    <!-- ================= 2. CÓMO SE HABLAN ================= -->
+    <div class="card">
+        <h2>2 · Cómo se hablan (API + JSON)</h2>
+        <ul class="lista">
+            <li><b>API</b> = puente que permite que 2 sistemas se comuniquen aunque no hablen el mismo idioma.</li>
+            <li><b>API REST</b> = el tipo de API más usado en la web.</li>
+            <li><b>JSON</b> = el idioma de los datos: objetos <span class="ok">{ }</span> y arreglos <span class="ok">[ ]</span>.</li>
+            <li><b>Request</b> = lo que el front <b>manda</b> (petición).</li>
+            <li><b>Response</b> = lo que el back <b>responde</b>.</li>
+        </ul>
+        <div class="cajita">
+            Front → manda JSON (request) → Back → consulta BD → Back → responde JSON (response) → Front pinta
+        </div>
+        <div class="resaltar"><b>Desacople:</b> el backend no sabe si le habla una web, un celular u otro sistema. Solo recibe y responde JSON.</div>
+    </div>
+
+    <!-- ================= 3. CRUD ================= -->
+    <div class="card">
+        <h2>3 · CRUD — las 4 operaciones básicas</h2>
+        <table>
+            <tr><th>Letra</th><th>Operación</th><th>En tu app</th></tr>
+            <tr><td><b>C</b></td><td><b>C</b>reate — crear</td><td>Agregar una tarea</td></tr>
+            <tr><td><b>R</b></td><td><b>R</b>ead — consultar</td><td>Ver la lista de tareas</td></tr>
+            <tr><td><b>U</b></td><td><b>U</b>pdate — modificar</td><td>Editar / cambiar estatus</td></tr>
+            <tr><td><b>D</b></td><td><b>D</b>elete — eliminar</td><td>Borrar una tarea</td></tr>
+        </table>
+        <div class="resaltar">Todo modelo de datos en una app se maneja con CRUD. Es la base universal.</div>
+    </div>
+
+    <!-- ================= 4. ENDPOINTS ================= -->
+    <div class="card">
+        <h2>4 · Los endpoints de TU app</h2>
+        <table>
+            <tr><th>Método</th><th>Ruta</th><th>CRUD</th><th>Respuesta</th></tr>
+            <tr><td><b>POST</b></td><td>/api/tareas</td><td>Crear</td><td>201 + tarea nueva</td></tr>
+            <tr><td><b>GET</b></td><td>/api/tareas</td><td>Leer todas</td><td>200 + lista</td></tr>
+            <tr><td><b>GET</b></td><td>/api/tareas/:id</td><td>Leer una</td><td>200 + tarea · 404</td></tr>
+            <tr><td><b>PUT</b></td><td>/api/tareas/:id</td><td>Modificar</td><td>200 + tarea · 400 inválido</td></tr>
+            <tr><td><b>DELETE</b></td><td>/api/tareas/:id</td><td>Eliminar</td><td>204 (sin cuerpo)</td></tr>
+        </table>
+        <div class="resaltar">El backend se prueba con <b>curl</b> o Postman, sin necesidad del frontend. Eso se llama "cliente de API".</div>
+    </div>
+
+    <!-- ================= 5. MODELO TAREA ================= -->
+    <div class="card">
+        <h2>5 · El modelo "Tarea" (los datos)</h2>
+        <div class="dos-col">
+            <div>
+                <h3>Los 4 campos</h3>
+                <ul class="lista">
+                    <li><b>nombre</b> — qué hay que hacer</li>
+                    <li><b>responsable</b> — quién la toma</li>
+                    <li><b>estatus</b> — en qué estado está</li>
+                    <li><b>descripcion</b> — detalle / notas</li>
+                </ul>
+                <p style="font-size:13px; margin-top:6px;">(+ <b>id</b> = número único que da la base de datos sola)</p>
+            </div>
+            <div>
+                <h3>Estatus = valores cerrados</h3>
+                <ul class="lista">
+                    <li>🟠 <b>pendiente</b> — todavía no</li>
+                    <li>🔵 <b>en_progreso</b> — se está haciendo</li>
+                    <li>🟢 <b>hecha</b> — terminada</li>
+                </ul>
+                <div class="resaltar" style="margin-top:8px;">El estatus NO es texto libre: solo estos 3 valores. Eso es normalización.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 6. CÓMO LEVANTAR ================= -->
+    <div class="card">
+        <h2>6 · Cómo levantar la app (2 pasos)</h2>
+        <table>
+            <tr><th>Paso</th><th>Qué hacer</th></tr>
+            <tr><td><b>1 · Backend</b></td><td>Terminal en <b>backend/</b> → <b>npm start</b> → dejala abierta</td></tr>
+            <tr><td><b>2 · Frontend</b></td><td>Doble clic en <b>frontend/index.html</b></td></tr>
+        </table>
+        <div class="resaltar"><span class="ojo">⚠️ Orden importa:</span> primero el backend, después el front. Si no anda, la terminal dejó de decir "Backend corriendo".</div>
+        <div class="cajita">package.json = el corazón del proyecto: ahí dice qué usa (dependencias) y cómo arranca (scripts → npm start)</div>
+    </div>
+
+    <!-- ================= 7. LOS 4 QUE ME CONFUNDO ================= -->
+    <div class="card">
+        <h2>7 · Los 4 que me confunden (¡ya no!)</h2>
+        <table>
+            <tr><th>Yo decía...</th><th>La verdad</th></tr>
+            <tr><td>"next" para el backend</td><td><b>Express</b> — las 3 famosas son Express, Fastify, NestJS</td></tr>
+            <tr><td>"mysql"</td><td><b>SQLite local</b> — un archivo. MySQL fue la tarea vieja</td></tr>
+            <tr><td>"create... y delete"</td><td><b>crear, consultar, modificar, eliminar</b> (CRUD)</td></tr>
+            <tr><td>"no me acuerdo los campos"</td><td><b>nombre, responsable, estatus, descripción</b></td></tr>
+        </table>
+    </div>
+
+    <!-- ================= 8. REGLAS DE ORO ================= -->
+    <div class="card">
+        <h2>8 · Reglas de oro del código</h2>
+        <div class="dos-col">
+            <div>
+                <h3>const vs let</h3>
+                <ul class="lista">
+                    <li><b>const</b> = no cambia (arreglos, objetos)</li>
+                    <li><b>let</b> = cambia (contadores, acumuladores)</li>
+                    <li><span class="ojo">Pista de Leo:</span> "¿va a cambiar? → let"</li>
+                </ul>
+                <h3>Selector de elementos</h3>
+                <ul class="lista">
+                    <li><span class="ok">#</span> = id · <span class="ok">.</span> = clase</li>
+                    <li>getElementById("id") sin #</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Arreglo vs objeto</h3>
+                <ul class="lista">
+                    <li><b>Arreglo</b> [ ] = lista, se agarra por posición [0]</li>
+                    <li><b>Objeto</b> { } = ficha con nombre: valor, se agarra con punto .campo</li>
+                </ul>
+                <h3>Otras</h3>
+                <ul class="lista">
+                    <li><b>===</b> compara valor Y tipo (no ==)</li>
+                    <li>Punto y coma ; al final</li>
+                    <li>camelCase: <b>cargarTareas</b> (sin espacios, sin acentos)</li>
+                    <li>IDs con guion: <b>input-nombre</b></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 9. VOCABULARIO ================= -->
+    <div class="card">
+        <h2>9 · Vocabulario de Leo (para sonar técnico)</h2>
+        <table>
+            <tr><th>Palabra</th><th>Qué significa</th></tr>
+            <tr><td><b>Middleware</b></td><td>Función que va "en el medio" del pedido (ej. cors, express.json)</td></tr>
+            <tr><td><b>package.json</b></td><td>Corazón del proyecto: dependencias + scripts</td></tr>
+            <tr><td><b>Desacople</b></td><td>El back no sabe quién le habla</td></tr>
+            <tr><td><b>Valores cerrados</b></td><td>Campos con lista fija (el estatus solo puede ser 1 de 3)</td></tr>
+            <tr><td><b>Fuente única de verdad</b></td><td>Los datos viven en UN solo lugar (la BD), no duplicados</td></tr>
+            <tr><td><b>Ruta / endpoint</b></td><td>La "dirección" de cada operación (/api/tareas)</td></tr>
+        </table>
+    </div>
+
+    <!-- ================= 10. FRASES PARA LEON ================= -->
+    <div class="card">
+        <h2>10 · Si Leo te pregunta algo que no sabés</h2>
+        <div class="resaltar">"Esto todavía no me quedó firme, quiero entenderlo." — es lo que él quiere escuchar. Mejor que fingir.</div>
+        <ul class="lista">
+            <li>Validá que funcione ANTES de decir "listo" (probar de verdad).</li>
+            <li>Entendé cada archivo: <b>server.js</b> (entrada) → <b>routes/tareas.js</b> (CRUD) → <b>db.js</b> (BD) → <b>js/app.js</b> (front que llama).</li>
+            <li>El prompt al modelo: rol + contexto + tarea + formato + restricciones. Acotado, no "dame todo el código".</li>
+        </ul>
+    </div>
+
+    <div class="footer">Ayuda memoria — App ToDo 3 capas · Posada Maestosso · Capacitación con Leo</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra — Taller de tareas</title>
+    <!-- Fuentes: Marcellus (títulos, serif) + Archivo (cuerpo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS en archivo externo (práctica de Leo, clase 5): los estilos viven en css/styles.css -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <div class="page">
+
+        <!-- Header: nombre de la app + contador de abiertas/hechas (lo llena js/app.js) -->
+        <header class="header">
+            <div class="header-brand">
+                <p class="kicker">Taller de tareas</p>
+                <h1 class="wordmark">Pizarra</h1>
+            </div>
+            <p class="header-counts" id="contador-abiertas">—</p>
+        </header>
+
+        <p class="intro">Una lista compartida: nombre, responsable, estatus y descripción. Sin cuentas. Lo que anotes
+            queda en la base local.</p>
+
+        <main class="layout">
+
+            <!-- ============ FORMULARIO: la parte estática (existe al arrancar) ============ -->
+            <section class="card form-card">
+                <h2 class="card-title">Nueva tarea</h2>
+                <!-- form: el "submit" lo atrapa js/app.js con preventDefault (no recarga) -->
+                <form id="form-tarea">
+                    <!-- Patrón de cada campo: label (para qué sirve) + input con su id -->
+                    <div class="field">
+                        <label for="input-nombre">Nombre</label>
+                        <!-- id = la etiqueta única (el "DNI") que usa JS para encontrarlo -->
+                        <!-- required = el navegador no deja enviar vacío -->
+                        <!-- placeholder = el texto gris de ayuda -->
+                        <input type="text" id="input-nombre" placeholder="Qué hay que hacer" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="input-responsable">Responsable</label>
+                        <input type="text" id="input-responsable" placeholder="Quién la toma" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="select-estatus">Estatus</label>
+                        <!-- select = menú desplegable; los valores son los "cerrados" de la BD -->
+                        <select id="select-estatus">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en_progreso">En progreso</option>
+                            <option value="hecha">Hecha</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="input-descripcion">Descripción</label>
+                        <textarea id="input-descripcion" rows="3" placeholder="Detalle, criterio de listo, notas"></textarea>
+                    </div>
+
+                    <!-- type="submit" dispara el evento submit del form (JS lo atrapa) -->
+                    <button type="submit" id="btn-agregar" class="btn btn-primary">Agregar tarea</button>
+                    <!-- type="button" = NO envía nada, solo ejecuta lo que JS le asigne (cancelar edición) -->
+                    <button type="button" id="btn-cancelar" class="btn btn-ghost hidden">Cancelar edición</button>
+                </form>
+            </section>
+
+            <!-- ============ LISTA: el contenedor donde JS inyecta las tarjetas (HTML dinámico) ============ -->
+            <section class="list-col">
+                <!-- ============ BUSCADOR (tarea del jueves: filtros) ============
+                     Filtra por nombre, responsable y estatus. No recarga la página:
+                     el submit lo atrapa js/app.js y vuelve a pedir al backend
+                     con los filtros en la URL (?nombre=...&estatus=...) -->
+                <div class="card search-card">
+                    <h2 class="card-title">Buscar tareas</h2>
+                    <form id="form-filtro">
+                        <div class="search-grid">
+                            <div class="field">
+                                <label for="filtro-nombre">Por nombre</label>
+                                <input type="text" id="filtro-nombre" placeholder="Ej. presupuesto">
+                            </div>
+                            <div class="field">
+                                <label for="filtro-responsable">Por responsable</label>
+                                <input type="text" id="filtro-responsable" placeholder="Ej. Ana">
+                            </div>
+                            <div class="field">
+                                <label for="filtro-estatus">Por estatus</label>
+                                <!-- Por defecto arranca en "Pendiente" (selected): al abrir la app
+                                     no trae TODAS las tareas, solo las pendientes (menos pesado).
+                                     "Todas" (value="") queda disponible para ver el listado completo. -->
+                                <select id="filtro-estatus">
+                                    <option value="">Todas</option>
+                                    <option value="pendiente" selected>Pendiente</option>
+                                    <option value="en_progreso">En progreso</option>
+                                    <option value="hecha">Hecha</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="search-actions">
+                            <button type="submit" id="btn-filtrar" class="btn btn-primary btn-sm">Filtrar</button>
+                            <button type="button" id="btn-limpiar-filtros" class="btn btn-ghost btn-sm">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="list-header">
+                    <h2 class="card-title">Tareas</h2>
+                    <!-- el total lo llena js/app.js con tareas.length -->
+                    <span class="count" id="contador-total">0 en total</span>
+                </div>
+                <!-- lista-tareas = acá app.js crea una tarjeta por cada tarea -->
+                <!-- aria-live="polite" = los lectores de pantalla anuncian los cambios (accesibilidad) -->
+                <div id="lista-tareas" class="task-list" aria-live="polite">
+                    <p id="vacio" class="empty">No hay tareas. Agregá la primera.</p>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- JS SIEMPRE al final del body (práctica de Leo, clase 7): para que el HTML ya exista cuando corre -->
+    <script src="js/app.js"></script>
+</body>
+</html>
