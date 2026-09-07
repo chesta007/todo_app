@@ -124,7 +124,13 @@
 
     </div>
 
-    <!-- JS SIEMPRE al final del body (práctica de Leo, clase 7): para que el HTML ya exista cuando corre -->
-    <script src="js/app.js"></script>
+    <!-- JS SIEMPRE al final del body (práctica de Leo, clase 7): para que el HTML ya exista cuando corre.
+         En MVC el front se parte en 3 capas (en orden, cada una usa la anterior):
+           model.js      → los datos (fetch a la API)
+           view.js       → la pantalla (pinta tarjetas y contadores)
+           controller.js → conecta Model + View (escucha eventos) -->
+    <script src="js/model.js"></script>
+    <script src="js/view.js"></script>
+    <script src="js/controller.js"></script>
 </body>
 </html>
