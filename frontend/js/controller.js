@@ -39,6 +39,13 @@ window.TareaController = (function () {
         estatus: document.getElementById('filtro-estatus')
     };
     const btnLimpiarFiltros = document.getElementById('btn-limpiar-filtros');
+    const mensajeError = document.getElementById('mensaje-error');
+
+    // Muestra u oculta el cartel de error (le dice al usuario qué pasó, sin mudo)
+    function mostrarError(msj) {
+        mensajeError.textContent = msj || '';
+        mensajeError.classList.toggle('hidden', !msj);
+    }
 
     // ---------- LEER los filtros actuales del buscador ----------
     function filtrosActuales() {
@@ -51,9 +58,14 @@ window.TareaController = (function () {
 
     // ---------- RECARGAR: pide al Model y repinta con la View ----------
     async function recargar() {
-        const tareas = await model.leerTareas(filtrosActuales()); // Model: trae datos
-        view.pintarLista(listaTareas, vacio, tareas);             // View: dibuja tarjetas
-        view.pintarContadores(contadorTotal, contadorAbiertas, tareas); // View: contadores
+        try {
+            const tareas = await model.leerTareas(filtrosActuales()); // Model: trae datos
+            view.pintarLista(listaTareas, vacio, tareas);             // View: dibuja tarjetas
+            view.pintarContadores(contadorTotal, contadorAbiertas, tareas); // View: contadores
+            mostrarError(null);                                       // todo ok → sin cartel
+        } catch (error) {
+            mostrarError(error.message);                              // el backend falló → avisá
+        }
     }
 
     // ---------- EVENTO: envío del formulario (agregar o guardar edición) ----------
@@ -69,18 +81,32 @@ window.TareaController = (function () {
             descripcion: camposForm.descripcion.value.trim()
         };
 
-        // ¿Estoy creando o editando? (editandoId = null → creando)
-        if (editandoId === null) {
-            await model.crearTarea(datos);
-        } else {
-            await model.actualizarTarea(editandoId, datos);
-            editandoId = null;                       // termina el modo edición
-            view.modoBoton(btnAgregar, btnCancelar, false);
-        }
+        // Protege contra el doble click: el botón queda DESHABILITADO hasta que responda
+        btnAgregar.disabled = true;
+        btnAgregar.textContent = 'Guardando…';
 
-        form.reset();            // limpia el formulario para la próxima
-        camposForm.estatus.value = 'pendiente';
-        await recargar();        // vuelve a pedir TODO y repinta (fuente única de verdad)
+        try {
+            // ¿Estoy creando o editando? (editandoId = null → creando)
+            if (editandoId === null) {
+                await model.crearTarea(datos);
+            } else {
+                await model.actualizarTarea(editandoId, datos);
+                editandoId = null;                       // termina el modo edición
+                view.modoBoton(btnAgregar, btnCancelar, false);
+            }
+
+            form.reset();            // limpia el formulario para la próxima
+            camposForm.estatus.value = 'pendiente';
+            await recargar();        // vuelve a pedir TODO y repinta (fuente única de verdad)
+        } catch (error) {
+            // El backend rechazó (400/500): avisamos y NO reseteamos el form
+            // (el usuario no pierde lo que escribió)
+            mostrarError(error.message);
+        } finally {
+            // Pase lo que pase, volvé a habilitar el botón
+            btnAgregar.disabled = false;
+            btnAgregar.textContent = editandoId === null ? 'Agregar tarea' : 'Guardar cambios';
+        }
     });
 
     // ---------- EVENTO: botones DENTRO de la lista (editar / eliminar) ----------
@@ -93,21 +119,29 @@ window.TareaController = (function () {
         const accion = boton.dataset.accion; // qué acción (editar | eliminar)
 
         if (accion === 'eliminar') {
-            await model.eliminarTarea(id);
-            await recargar();
+            try {
+                await model.eliminarTarea(id);
+                await recargar();
+            } catch (error) {
+                mostrarError(error.message); // p. ej. ya no existía (404)
+            }
         }
 
         if (accion === 'editar') {
-            // 1. Model: pide ESA tarea al backend (GET /api/tareas/:id)
-            const tarea = await model.leerTareaPorId(id);
+            try {
+                // 1. Model: pide ESA tarea al backend (GET /api/tareas/:id)
+                const tarea = await model.leerTareaPorId(id);
 
-            // 2. View: vuelca sus datos al formulario (para modificarlos)
-            view.volcarEnFormulario(camposForm, tarea);
+                // 2. View: vuelca sus datos al formulario (para modificarlos)
+                view.volcarEnFormulario(camposForm, tarea);
 
-            // 3. Activa el "modo edición"
-            editandoId = id;
-            view.modoBoton(btnAgregar, btnCancelar, true);
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // sube hasta el formulario
+                // 3. Activa el "modo edición"
+                editandoId = id;
+                view.modoBoton(btnAgregar, btnCancelar, true);
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // sube hasta el formulario
+            } catch (error) {
+                mostrarError(error.message);
+            }
         }
     });
 
@@ -116,9 +150,13 @@ window.TareaController = (function () {
         const select = event.target.closest('.chip'); // ¿cambiaron un selector de estatus?
         if (!select) return;
 
-        // Manda SOLO el estatus nuevo (PUT → el backend conserva el resto)
-        await model.actualizarTarea(select.dataset.id, { estatus: select.value });
-        await recargar();
+        try {
+            // Manda SOLO el estatus nuevo (PUT → el backend conserva el resto)
+            await model.actualizarTarea(select.dataset.id, { estatus: select.value });
+        } catch (error) {
+            mostrarError(error.message);
+        }
+        await recargar(); // repinta con el estado que quedó guardado (aunque haya fallado)
     });
 
     // ---------- EVENTO: cancelar edición (sin guardar) ----------
@@ -127,6 +165,7 @@ window.TareaController = (function () {
         form.reset();
         camposForm.estatus.value = 'pendiente';
         view.modoBoton(btnAgregar, btnCancelar, false);
+        mostrarError(null); // limpia cualquier error que estuviera en pantalla
     });
 
     // ---------- EVENTO: buscador (filtros) ----------

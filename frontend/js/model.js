@@ -16,6 +16,19 @@ window.TareaModel = (function () {
 
     const API_URL = 'http://localhost:3000/api/tareas'; // a dónde le habla al backend
 
+    // ---------- Ayudante: chequear la respuesta del backend ----------
+    // Si el pedido no fue bien (400/404/500/...), lanza un Error con el
+    // mensaje que mandó el backend (así el controller lo muestra en pantalla).
+    async function respuestaJSON(response) {
+        if (!response.ok) {
+            const cuerpo = await response.json().catch(() => ({})); // si no trae JSON, igual seguimos
+            throw new Error(cuerpo.error || `Error ${response.status}`);
+        }
+        // 204 = "todo bien pero sin contenido" (caso del borrado) → no hay JSON que leer
+        if (response.status === 204) return null;
+        return response.json();
+    }
+
     // ---------- READ — traer las tareas (con filtros opcionales) ----------
     // filtros = { nombre, responsable, estatus } → arma ?nombre=...&responsable=...
     // URLSearchParams = la forma "oficial" de armar ?clave=valor&clave2=valor2
@@ -27,13 +40,13 @@ window.TareaModel = (function () {
         const query = params.toString() ? `?${params.toString()}` : ''; // '' si no hay filtros
 
         const response = await fetch(`${API_URL}${query}`); // GET (por defecto)
-        return response.json(); // convierte el JSON que llegó en objetos JS
+        return respuestaJSON(response); // convierte el JSON que llegó en objetos JS
     }
 
     // ---------- READ — traer UNA tarea por su id ----------
     async function leerTareaPorId(id) {
         const response = await fetch(`${API_URL}/${id}`);
-        return response.json();
+        return respuestaJSON(response);
     }
 
     // ---------- CREATE — agregar tarea ----------
@@ -43,7 +56,7 @@ window.TareaModel = (function () {
             headers: { 'Content-Type': 'application/json' },  // "te mando JSON"
             body: JSON.stringify(datos)                       // el objeto → texto JSON
         });
-        return response.json();
+        return respuestaJSON(response);
     }
 
     // ---------- UPDATE — modificar tarea ----------
@@ -53,12 +66,13 @@ window.TareaModel = (function () {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(datos)
         });
-        return response.json();
+        return respuestaJSON(response);
     }
 
     // ---------- DELETE — eliminar tarea ----------
     async function eliminarTarea(id) {
-        await fetch(`${API_URL}/${id}`, { method: 'DELETE' }); // operación CRUD: Delete
+        const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' }); // operación CRUD: Delete
+        await respuestaJSON(response); // si el backend no pudo (404), acá lanza el error
     }
 
     // Lo que el resto del front puede usar (el controller)

@@ -23,6 +23,18 @@ window.TareaView = (function () {
     const ICONO_EDITAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
     const ICONO_ELIMINAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
 
+    // Escapa los caracteres que el navegador interpreta como HTML (<, >, &, " y ')
+    // = evita que un texto de tarea se "ejecute" como código (seguridad XSS).
+    // Si el usuario tipea <img onerror=...>, se muestra como texto plano, no se ejecuta.
+    function escapeHtml(texto) {
+        return String(texto)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
     // Arma las <option> del selector de estatus (con el valor actual seleccionado)
     function opcionesEstatus(actual) {
         return Object.entries(ESTADOS)
@@ -55,9 +67,9 @@ window.TareaView = (function () {
                     <select class="chip estatus-${tarea.estatus}" data-id="${tarea.id}"
                             aria-label="Cambiar estatus">${opcionesEstatus(tarea.estatus)}</select>
                 </span>
-                <div class="task-nombre">${tarea.nombre}</div>
-                <div class="task-responsable">${tarea.responsable}</div>
-                <div class="task-detalle">${tarea.descripcion || 'Sin descripción'}</div>
+                <div class="task-nombre">${escapeHtml(tarea.nombre)}</div>
+                <div class="task-responsable">${escapeHtml(tarea.responsable)}</div>
+                <div class="task-detalle">${escapeHtml(tarea.descripcion || 'Sin descripción')}</div>
                 <div class="task-actions">
                     <button class="icon-btn" data-accion="editar" data-id="${tarea.id}" aria-label="Editar" title="Editar">${ICONO_EDITAR}</button>
                     <button class="icon-btn" data-accion="eliminar" data-id="${tarea.id}" aria-label="Eliminar" title="Eliminar">${ICONO_ELIMINAR}</button>

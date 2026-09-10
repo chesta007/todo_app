@@ -22,26 +22,50 @@ function estatusValido(estatus) {
     return ESTADOS_VALIDOS.includes(estatus);
 }
 
-// ¿Los campos obligatorios están presentes?
+// ¿Los campos obligatorios están presentes, son TEXTO y no son solo espacios?
 // (nombre y responsable son obligatorios, según Leo clase 1)
+// .trim() = saca los espacios de los costados: "   " queda "" → se rechaza
+// (bug detectado por Leo 8/9: un responsable de solo espacios se guardaba)
+// typeof === 'string' = también rechaza un número (123?.trim() reventaría con 500)
 function tieneCamposObligatorios(tarea) {
-    return Boolean(tarea.nombre && tarea.responsable);
+    return Boolean(
+        tarea &&
+        typeof tarea.nombre === 'string' && tarea.nombre.trim() &&
+        typeof tarea.responsable === 'string' && tarea.responsable.trim()
+    );
 }
 
 // ---------- Consultas a la base de datos (CRUD) ----------
 
 // CREATE — insertar una tarea y devolverla completa (con su id)
 function crearTarea({ nombre, responsable, estatus, descripcion }) {
+    // trim: normaliza antes de guardar → datos limpios, sin "espacios de más"
+    // (la validación rechaza "   ", pero " Ana " también conviene guardarla como "Ana")
+    const nombreFinal = nombre.trim();
+    const responsableFinal = responsable.trim();
     const estatusFinal = estatus || 'pendiente'; // default si no mandan estatus
+    const descripcionFinal = descripcion ? descripcion.trim() : '';
 
     const result = db
         .prepare(
             'INSERT INTO tareas (nombre, responsable, estatus, descripcion) VALUES (?, ?, ?, ?)'
         )
-        .run(nombre, responsable, estatusFinal, descripcion || '');
+        .run(nombreFinal, responsableFinal, estatusFinal, descripcionFinal);
 
     // Vuelve a leer la tarea recién creada (con el id que generó la BD)
     return obtenerTareaPorId(result.lastInsertRowid);
+}
+
+// ---------- Ayudante del buscador ----------
+// El usuario escribe "%" o "_" → en LIKE son comodines (matchearían de más).
+// escapeLike los convierte en texto literal: \%, \_
+function escapeLike(texto) {
+    return texto.replace(/[%_]/g, (char) => `\\${char}`);
+}
+
+// ¿El filtro es texto usable? (descarta arrays de Express y números)
+function textoFiltro(valor) {
+    return typeof valor === 'string' ? valor.trim() : '';
 }
 
 // READ — listar tareas con filtros opcionales (nombre, responsable, estatus)
@@ -54,13 +78,18 @@ function listarTareas({ nombre, responsable, estatus } = {}) {
 
     // LIKE = "que contenga" (búsqueda parcial, no exacta)
     // %...%  = comodines: %pollo% matchea "pollo relleno", "pollo al verdeo", ...
-    if (nombre) {
-        condiciones.push('nombre LIKE ?');
-        valores.push(`%${nombre}%`);
+    // OJO: se escapa %, _ y se descartan los filtros que tras limpiar quedaron vacíos
+    // (un filtro "   " matchearía casi todo → se ignora)
+    const nombreBusqueda = textoFiltro(nombre);
+    const responsableBusqueda = textoFiltro(responsable);
+
+    if (nombreBusqueda) {
+        condiciones.push("nombre LIKE ? ESCAPE '\\'");
+        valores.push(`%${escapeLike(nombreBusqueda)}%`);
     }
-    if (responsable) {
-        condiciones.push('responsable LIKE ?');
-        valores.push(`%${responsable}%`);
+    if (responsableBusqueda) {
+        condiciones.push("responsable LIKE ? ESCAPE '\\'");
+        valores.push(`%${escapeLike(responsableBusqueda)}%`);
     }
     // El estatus NO lleva %: es igualdad exacta contra los valores cerrados
     if (estatus) {
@@ -95,15 +124,24 @@ function actualizarTarea(id, { nombre, responsable, estatus, descripcion }) {
 
     // Valida ANTES de escribir: no se guardan datos incompletos o raros
     if (!tieneCamposObligatorios({ nombre: nombreFinal, responsable: responsableFinal })) {
-        return { error: 'datos invalidos', detalle: 'nombre y responsable no pueden quedar vacíos' };
+        return { error: 'datos invalidos', detalle: 'nombre y responsable deben ser texto y no pueden quedar vacíos' };
     }
     if (!estatusValido(estatusFinal)) {
         return { error: 'datos invalidos', detalle: `Estatus inválido: debe ser ${ESTADOS_VALIDOS.join(', ')}` };
     }
 
+    // trim al guardar: normaliza los valores finales (datos limpios, sin espacios de más)
     db.prepare(
         'UPDATE tareas SET nombre = ?, responsable = ?, estatus = ?, descripcion = ? WHERE id = ?'
-    ).run(nombreFinal, responsableFinal, estatusFinal, descripcionFinal, tarea.id);
+    ).run(
+        nombreFinal.trim(),
+        responsableFinal.trim(),
+        estatusFinal,
+        descripcionFinal === null || descripcionFinal === undefined
+            ? ''
+            : String(descripcionFinal).trim(),
+        tarea.id
+    );
 
     // Devuelve la tarea ya actualizada
     return { tarea: obtenerTareaPorId(id) };
