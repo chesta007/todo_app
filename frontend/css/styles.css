@@ -334,6 +334,104 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ---------- Detalle de tarea (tarea.html) ---------- */
+.layout-detalle {
+    max-width: 720px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+.back {
+    display: inline-block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.back:hover { color: var(--accent); }
+
+.detalle-card { box-shadow: 0 2px 8px rgba(41, 47, 38, 0.05); }
+
+/* En el detalle el estatus es un chip FIJO (no un selector como en la lista) */
+.chip-static { cursor: default; display: inline-block; }
+
+.detalle-nombre {
+    font-family: 'Marcellus', serif;
+    font-size: 24px;
+    font-weight: 400;
+    margin: 12px 0 6px;
+}
+
+.detalle-responsable {
+    font-size: 14px;
+    color: #6E6A56;
+    margin-bottom: 12px;
+}
+
+.detalle-responsable strong { color: var(--text); font-weight: 600; }
+
+.detalle-descripcion {
+    font-size: 15px;
+    line-height: 1.6;
+    white-space: pre-line; /* respeta los saltos de línea que escribió el usuario */
+}
+
+/* En la lista, el nombre de la tarea ahora es un enlace → tarea.html?id=... */
+.task-nombre a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.task-nombre a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* ---------- Comentarios (la relación "1 a N" de Leo, clase 13) ---------- */
+.comentarios {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.comentario {
+    position: relative;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px 46px 14px 14px;
+    animation: fadeIn 0.25s ease;
+}
+
+.comentario-info {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+    padding-right: 30px; /* deja aire a la izquierda del botón borrar */
+}
+
+.comentario-info strong { font-size: 13.5px; color: var(--text); }
+
+.comentario-fecha { font-size: 12px; color: var(--muted); }
+
+.comentario-texto {
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.comentario-borrar {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
 .hidden { display: none !important; }
 
 @media (max-width: 480px) {

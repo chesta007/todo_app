@@ -75,12 +75,43 @@ window.TareaModel = (function () {
         await respuestaJSON(response); // si el backend no pudo (404), acá lanza el error
     }
 
+    // ---------- COMENTARIOS (relación 1 a N, Leo clase 13) ----------
+    // La misma API_URL apunta a /api/tareas, así que los comentarios cuelgan de ahí:
+    //   GET    /api/tareas/:id/comentarios   → los comentarios de esa tarea
+    //   POST   /api/tareas/:id/comentarios   → crear uno
+    //   DELETE /api/tareas/comentarios/:id   → borrar uno (solo el comentario)
+
+    // READ — todos los comentarios de una tarea
+    async function leerComentarios(tareaId) {
+        const response = await fetch(`${API_URL}/${tareaId}/comentarios`);
+        return respuestaJSON(response);
+    }
+
+    // CREATE — agregar un comentario a una tarea
+    async function crearComentario(tareaId, datos) {
+        const response = await fetch(`${API_URL}/${tareaId}/comentarios`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
+        return respuestaJSON(response);
+    }
+
+    // DELETE — eliminar un comentario (no toca la tarea)
+    async function eliminarComentario(id) {
+        const response = await fetch(`${API_URL}/comentarios/${id}`, { method: 'DELETE' });
+        await respuestaJSON(response); // si no existía (404), acá lanza el error
+    }
+
     // Lo que el resto del front puede usar (el controller)
     return {
         leerTareas,
         leerTareaPorId,
         crearTarea,
         actualizarTarea,
-        eliminarTarea
+        eliminarTarea,
+        leerComentarios,
+        crearComentario,
+        eliminarComentario
     };
 })();

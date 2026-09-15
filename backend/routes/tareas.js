@@ -12,6 +12,21 @@ const controller = require('../controllers/tareasController');
 
 const router = express.Router();
 
+// ---------- Comentarios (relación 1 a N) ----------
+// IMPORTANTE: van ANTES de las rutas con "/:id" (Express matchea en orden:
+// "/comentarios" tiene que caer en esta ruta, no en la del :id).
+
+// READ — GET /api/tareas/:id/comentarios
+router.get('/:id/comentarios', controller.listarComentarios);
+
+// CREATE — POST /api/tareas/:id/comentarios
+router.post('/:id/comentarios', controller.crearComentario);
+
+// DELETE — DELETE /api/tareas/comentarios/:id (el comentario vuela solo, sin tocar la tarea)
+router.delete('/comentarios/:id', controller.eliminarComentario);
+
+// ---------- CRUD de tareas ----------
+
 // CREATE — POST /api/tareas
 router.post('/', controller.crear);
 

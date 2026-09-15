@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de tarea — Pizarra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <div class="page">
+
+        <!-- Header: vuelta a la lista + nombre de la tarea (lo llena js/detalle.js) -->
+        <header class="header">
+            <div class="header-brand">
+                <a class="back" href="index.html">← Volver a la pizarra</a>
+                <p class="kicker">Detalle de tarea</p>
+                <h1 class="wordmark" id="detalle-titulo">…</h1>
+            </div>
+        </header>
+
+        <!-- Cartel de error: lo muestra js/detalle.js (tarea 404, backend apagado, ...) -->
+        <p id="mensaje-error" class="error hidden" role="alert"></p>
+
+        <main class="layout-detalle">
+
+            <!-- ============ DETALLE de la tarea (leo/cargo desde GET /api/tareas/:id) ============ -->
+            <section class="card detalle-card">
+                <h2 class="card-title" id="detalle-cabecera">Tarea</h2>
+                <!-- detalle-cuerpo = acá js/detalle.js pinta el chip, nombre, responsable y descripción -->
+                <div id="detalle-cuerpo"></div>
+            </section>
+
+            <!-- ============ COMENTARIOS (relación 1 a N: muchos por tarea) ============ -->
+            <section class="card">
+                <h2 class="card-title">Comentarios</h2>
+
+                <!-- Formulario: un comentario necesita autor + texto (el backend los exige) -->
+                <form id="form-comentario">
+                    <div class="field">
+                        <label for="input-autor">Tu nombre</label>
+                        <input type="text" id="input-autor" placeholder="Pablo, Leo, Pepito…" required>
+                    </div>
+                    <div class="field">
+                        <label for="input-texto">Comentario</label>
+                        <textarea id="input-texto" rows="3" placeholder="Qué hay que anotar de esta tarea" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar comentario</button>
+                </form>
+
+                <!-- Lista de comentarios: la llena js/detalle.js con lo que devuelve la API -->
+                <div id="lista-comentarios" class="comentarios" aria-live="polite">
+                    <p id="vacio-comentarios" class="empty hidden">Sin comentarios todavía.</p>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Mismo patrón MVC que index.html: model + view compartidos, y un controller propio
+         (detalle.js) que maneja SOLO esta página -->
+    <script src="js/model.js"></script>
+    <script src="js/view.js"></script>
+    <script src="js/detalle.js"></script>
+</body>
+</html>

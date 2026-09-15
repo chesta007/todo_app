@@ -67,7 +67,7 @@ window.TareaView = (function () {
                     <select class="chip estatus-${tarea.estatus}" data-id="${tarea.id}"
                             aria-label="Cambiar estatus">${opcionesEstatus(tarea.estatus)}</select>
                 </span>
-                <div class="task-nombre">${escapeHtml(tarea.nombre)}</div>
+                <div class="task-nombre"><a href="tarea.html?id=${tarea.id}">${escapeHtml(tarea.nombre)}</a></div>
                 <div class="task-responsable">${escapeHtml(tarea.responsable)}</div>
                 <div class="task-detalle">${escapeHtml(tarea.descripcion || 'Sin descripción')}</div>
                 <div class="task-actions">
@@ -108,11 +108,52 @@ window.TareaView = (function () {
         }
     }
 
+    // ---------- Vista de DETALLE (tarea.html?id=...) ----------
+    // Pinta la tarjeta con UNA tarea (su propia página, NO modal — Leo clase 13)
+    function pintarDetalle(contenedor, tarea) {
+        contenedor.innerHTML = `
+            <span class="chip chip-static estatus-${tarea.estatus}">${ESTADOS[tarea.estatus]}</span>
+            <h2 class="detalle-nombre">${escapeHtml(tarea.nombre)}</h2>
+            <p class="detalle-responsable">A cargo de <strong>${escapeHtml(tarea.responsable)}</strong></p>
+            <p class="detalle-descripcion">${escapeHtml(tarea.descripcion || 'Sin descripción.')}</p>
+        `;
+    }
+
+    // Pinta la lista de comentarios de la tarea (cada uno con su botón de borrar)
+    function pintarComentarios(contenedor, vacio, comentarios) {
+        contenedor.innerHTML = '';                    // 1. limpia lo que había
+
+        // 2. ¿Aún no hay comentarios? → mostrá el aviso
+        if (comentarios.length === 0) {
+            vacio.classList.remove('hidden');
+        } else {
+            vacio.classList.add('hidden');
+        }
+
+        // 3. una tarjeta por cada comentario (autor + fecha + texto + borrar)
+        for (const comentario of comentarios) {
+            const div = document.createElement('div');
+            div.className = 'comentario';
+            div.innerHTML = `
+                <div class="comentario-info">
+                    <strong>${escapeHtml(comentario.autor)}</strong>
+                    <span class="comentario-fecha">${escapeHtml(comentario.creado_en)}</span>
+                </div>
+                <p class="comentario-texto">${escapeHtml(comentario.texto)}</p>
+                <button type="button" class="icon-btn comentario-borrar" data-accion="eliminar-comentario"
+                        data-id="${comentario.id}" aria-label="Eliminar comentario" title="Eliminar">${ICONO_ELIMINAR}</button>
+            `;
+            contenedor.appendChild(div);              // 4. agrega la tarjeta a la lista
+        }
+    }
+
     // Lo que el resto del front puede usar (el controller)
     return {
         pintarLista,
         pintarContadores,
         volcarEnFormulario,
-        modoBoton
+        modoBoton,
+        pintarDetalle,
+        pintarComentarios
     };
 })();
