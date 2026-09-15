@@ -57,7 +57,7 @@ function obtener(req, res) {
     res.json(tarea); // existe → 200 con la tarea
 }
 
-// ---------- UPDATE — modificar una (PUT /api/tareas/:id) ----------
+// ---------- UPDATE — modificar una (PATCH /api/tareas/:id; PUT queda de alias) ----------
 // Actualización PARCIAL (Leo, clase 13): solo escribe los campos que vienen.
 function actualizar(req, res) {
     // Delega en el MODELO: valida contra el contrato, arma el SET dinámico

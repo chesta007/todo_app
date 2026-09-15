@@ -85,19 +85,6 @@ function erroresContrato(datos, { crear = false } = {}) {
     return errores;
 }
 
-// ¿Los campos obligatorios están presentes, son TEXTO y no son solo espacios?
-// (nombre y responsable son obligatorios, según Leo clase 1)
-// .trim() = saca los espacios de los costados: "   " queda "" → se rechaza
-// (bug detectado por Leo 8/9: un responsable de solo espacios se guardaba)
-// typeof === 'string' = también rechaza un número (123?.trim() reventaría con 500)
-function tieneCamposObligatorios(tarea) {
-    return Boolean(
-        tarea &&
-        typeof tarea.nombre === 'string' && tarea.nombre.trim() &&
-        typeof tarea.responsable === 'string' && tarea.responsable.trim()
-    );
-}
-
 // ---------- Consultas a la base de datos (CRUD) ----------
 
 // CREATE — insertar una tarea y devolverla completa (con su id)
@@ -227,14 +214,11 @@ function eliminarTarea(id) {
     return db.prepare('DELETE FROM tareas WHERE id = ?').run(Number(id)).changes;
 }
 
-// Exporta SOLO las funciones: el controller no toca la base, habla con estas
+// Exporta SOLO lo que el controller necesita (no toca la base directamente)
 module.exports = {
     ESTADOS_VALIDOS,
-    CONTRATO_TAREA,
     estatusValido,
-    campoPresente,
     erroresContrato,
-    tieneCamposObligatorios,
     crearTarea,
     listarTareas,
     obtenerTareaPorId,

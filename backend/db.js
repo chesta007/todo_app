@@ -43,5 +43,10 @@ db.exec(`
     )
 `);
 
+// Índice sobre la clave foránea: acelera "traeme los comentarios de ESTA tarea".
+// Sin índice, SQLite recorre toda la tabla comentarios en cada consulta por tarea_id.
+// Buena práctica: toda FK que se use para filtrar debería tener su índice.
+db.exec('CREATE INDEX IF NOT EXISTS idx_comentarios_tarea_id ON comentarios (tarea_id)');
+
 // module.exports = "acá está la conexión, úsenla" — así routes/tareas.js la recibe
 module.exports = db;

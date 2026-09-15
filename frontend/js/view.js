@@ -48,12 +48,12 @@ window.TareaView = (function () {
     function pintarLista(contenedor, vacio, tareas) {
         contenedor.innerHTML = ''; // 1. limpia la lista (borra todo lo que había)
 
-        // 2. ¿Está vacía? → mostrá el mensaje "No hay tareas"
-        if (tareas.length === 0) {
-            vacio.classList.remove('hidden');
-        } else {
-            vacio.classList.add('hidden');
-        }
+        // ⚠️ innerHTML='' también sacó el mensaje de vacío (vive dentro del contenedor):
+        // hay que volver a meterlo, si no, "No hay tareas" nunca se vería.
+        contenedor.appendChild(vacio);
+
+        // 2. ¿Está vacía? → mostrá el mensaje "No hay tareas" (si no, lo ocultamos)
+        vacio.classList.toggle('hidden', tareas.length > 0);
 
         // 3. Recorre el arreglo (for...of = "por cada tarea de la lista")
         for (const tarea of tareas) {
@@ -123,12 +123,11 @@ window.TareaView = (function () {
     function pintarComentarios(contenedor, vacio, comentarios) {
         contenedor.innerHTML = '';                    // 1. limpia lo que había
 
-        // 2. ¿Aún no hay comentarios? → mostrá el aviso
-        if (comentarios.length === 0) {
-            vacio.classList.remove('hidden');
-        } else {
-            vacio.classList.add('hidden');
-        }
+        // ⚠️ igual que en la lista: volver a meter el aviso (innerHTML='' lo sacó)
+        contenedor.appendChild(vacio);
+
+        // 2. ¿Aún no hay comentarios? → mostrá el aviso (si hay, se oculta)
+        vacio.classList.toggle('hidden', comentarios.length > 0);
 
         // 3. una tarjeta por cada comentario (autor + fecha + texto + borrar)
         for (const comentario of comentarios) {

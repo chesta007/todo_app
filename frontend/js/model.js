@@ -59,10 +59,10 @@ window.TareaModel = (function () {
         return respuestaJSON(response);
     }
 
-    // ---------- UPDATE — modificar tarea ----------
+    // ---------- UPDATE — modificar tarea (solo lo que se manda) ----------
     async function actualizarTarea(id, datos) {
         const response = await fetch(`${API_URL}/${id}`, {   // la ruta lleva el :id al final
-            method: 'PUT',                                    // operación CRUD: Update
+            method: 'PATCH',                                  // PATCH = actualización PARCIAL (el verbo correcto)
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(datos)
         });

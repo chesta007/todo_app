@@ -36,7 +36,12 @@ router.get('/', controller.listar);
 // READ — GET /api/tareas/:id
 router.get('/:id', controller.obtener);
 
-// UPDATE — PUT /api/tareas/:id
+// UPDATE — PATCH /api/tareas/:id
+// PATCH = el verbo correcto para una actualización PARCIAL (solo los campos que llegan).
+// Leo (clase 10): «el verbo correcto sería patch» (PUT manda el registro completo).
+router.patch('/:id', controller.actualizar);
+
+// Alias PUT: el verbo viejo sigue funcionando igual (compatibilidad)
 router.put('/:id', controller.actualizar);
 
 // DELETE — DELETE /api/tareas/:id

@@ -43,6 +43,6 @@ app.use((err, req, res, next) => {
 // Arranca el servidor y queda escuchando pedidos
 app.listen(PORT, () => {
     console.log(`Backend corriendo en http://localhost:${PORT}`);
-    console.log('Endpoints: GET/POST /api/tareas · GET/PUT/DELETE /api/tareas/:id');
+    console.log('Endpoints: GET/POST /api/tareas · GET/PATCH/PUT/DELETE /api/tareas/:id');
     console.log('Comentarios (1 a N): GET/POST /api/tareas/:id/comentarios · DELETE /api/tareas/comentarios/:id');
 });
