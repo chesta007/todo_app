@@ -28,14 +28,14 @@
         <main class="layout-detalle">
 
             <!-- ============ DETALLE de la tarea (leo/cargo desde GET /api/tareas/:id) ============ -->
-            <section class="card detalle-card">
+            <section class="card detalle-card" id="seccion-detalle">
                 <h2 class="card-title" id="detalle-cabecera">Tarea</h2>
                 <!-- detalle-cuerpo = acá js/detalle.js pinta el chip, nombre, responsable y descripción -->
                 <div id="detalle-cuerpo"></div>
             </section>
 
             <!-- ============ COMENTARIOS (relación 1 a N: muchos por tarea) ============ -->
-            <section class="card">
+            <section class="card" id="seccion-comentarios">
                 <h2 class="card-title">Comentarios</h2>
 
                 <!-- Formulario: un comentario necesita autor + texto (el backend los exige) -->

@@ -28,6 +28,8 @@ window.TareaDetalle = (function () {
     const listaComentarios = document.getElementById('lista-comentarios');
     const vacioComentarios = document.getElementById('vacio-comentarios');
     const mensajeError = document.getElementById('mensaje-error');
+    const seccionDetalle = document.getElementById('seccion-detalle');
+    const seccionComentarios = document.getElementById('seccion-comentarios');
 
     // Recuerda el último nombre usado (para no retipearlo en cada comentario)
     inputAutor.value = localStorage.getItem('comentario-autor') || '';
@@ -37,10 +39,19 @@ window.TareaDetalle = (function () {
         mensajeError.classList.toggle('hidden', !msj);
     }
 
+    // Si la tarea no existe (o falta el id) no tiene sentido mostrar la ficha
+    // ni el formulario de comentarios: los ocultamos. (El backend igual los
+    // rechaza con 404, pero la pantalla no debe ofrecer algo que no va a funcionar.)
+    function ocultarSecciones() {
+        seccionDetalle.classList.add('hidden');
+        seccionComentarios.classList.add('hidden');
+    }
+
     // ¿Vino un id en la URL? Si no, no hay nada que mostrar.
     if (!tareaId) {
         detalleTitulo.textContent = 'Falta el id';
         mostrarError('Falta el id de la tarea en la URL. Volvé a la lista y hacé clic en el nombre.');
+        ocultarSecciones();
         return;
     }
 
@@ -63,9 +74,10 @@ window.TareaDetalle = (function () {
 
             mostrarError(null); // todo ok → sin cartel
         } catch (error) {
-            // Tarea inexistente (404), backend apagado, etc. → avisá
+            // Tarea inexistente (404), backend apagado, etc. → avisá y ocultá las secciones
             mostrarError(error.message);
             detalleTitulo.textContent = 'Tarea no encontrada';
+            ocultarSecciones();
         }
     }
 
