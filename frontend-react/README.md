@@ -1,32 +1,43 @@
-# React + TypeScript + Vite
+# Pizarra — frontend en React (clase 15)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+La app ToDo de capacitación convertida de HTML/CSS/JS vanilla a **React + TypeScript + Vite**.
+El backend (Express) no cambió: vive en `../backend` y responde en `http://localhost:3000`.
 
-Currently, two official plugins are available:
+## Cómo correrla
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+# 1. Backend (desde ../backend)
+npm start          # API en http://localhost:3000
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+# 2. Este frontend
+npm install        # primera vez
+npm run dev        # app en http://localhost:5173
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+El proxy de Vite (`vite.config.ts`) manda `/api` → `http://localhost:3000`, así el fetch
+usa la misma URL relativa que tendría en producción.
+
+## Estructura
+
+```
+src/
+├── main.tsx                 → punto de entrada (createRoot + BrowserRouter)
+├── App.tsx                  → las rutas: / · /tareas/:id · * (SPA)
+├── api.ts                   → el "model": fetch al backend (igual que model.js)
+├── tipos.ts                 → los tipos (contrato de Tarea/Comentario/Estatus)
+├── styles.css               → copia exacta de styles.css del frontend vanilla
+├── componentes/             → TarjetaTarea, ChipEstatus, FormularioTarea, Buscador,
+│                              MensajeError, TarjetaComentario, Iconos
+└── paginas/                 → PaginaLista, PaginaDetalle, PaginaNoEncontrada
+```
+
+## Comandos
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | servidor de desarrollo con hot reload (http://localhost:5173) |
+| `npm run build` | TypeScript + build de producción en `dist/` |
+| `npm run lint` | oxlint (0 warnings esperados) |
+| `npm run preview` | sirve el build de producción localmente |
+
+Comparación completa vanilla ↔ React: `../COMPARACION_VANILLA_REACT.md`.

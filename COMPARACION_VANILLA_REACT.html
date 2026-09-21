@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparación — Vanilla vs React</title>
+<style>
+  :root {
+    --bg:#EDE4D2; --card:#F7F0E1; --border:#E3D7BE;
+    --text:#26382E; --muted:#8B8471; --accent:#2F4A3A;
+    --code-bg:#2A3A30; --code-text:#E8DFC8;
+    --c:#8FBF9F; --k:#D9B96A; --s:#C9A87C; --f:#9FB5E8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Archivo','Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.5;padding:16px 0 60px;}
+  .page{max-width:680px;margin:0 auto;padding:0 16px;}
+  h1,h2,h3{font-family:'Marcellus',Georgia,serif;font-weight:400;}
+  h1{font-size:28px;}
+  .parte{display:inline-block;background:var(--accent);color:#F6EFE0;border-radius:999px;padding:4px 14px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  h2{font-size:21px;margin:26px 0 10px;padding-bottom:5px;border-bottom:2px solid var(--accent);}
+  h3{font-size:16px;margin:14px 0 6px;}
+  p{margin:6px 0;}
+  .kicker{text-transform:uppercase;letter-spacing:.15em;font-size:11px;font-weight:600;color:var(--muted);}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin:10px 0;}
+  .cita{background:var(--card);border-left:4px solid var(--accent);padding:10px 14px;margin:10px 0;font-style:italic;color:#3A4A40;font-size:15px;}
+  code{font-family:Consolas,'Courier New',monospace;background:#E9DFC9;border-radius:4px;padding:1px 5px;font-size:13px;}
+  pre{background:var(--code-bg);color:var(--code-text);border-radius:9px;padding:10px 14px;margin:8px 0;font-family:Consolas,'Courier New',monospace;font-size:13px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;}
+  .c{color:var(--c);} .k{color:var(--k);} .s{color:var(--s);} .f{color:var(--f);}
+  table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13.5px;background:var(--card);}
+  th,td{border:1px solid var(--border);padding:6px 9px;text-align:left;vertical-align:top;}
+  th{background:#EDE3CB;font-weight:600;}
+  ul,ol{margin:6px 0 6px 20px;}
+  li{margin:3px 0;}
+  .chip{display:inline-block;background:var(--accent);color:#F6EFE0;border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600;margin:2px 2px;}
+  .chip.azul{background:#3B7285;} .chip.dorado{background:#8F8158;} .chip.rojo{background:#8A4B4B;} .chip.verde{background:#2E6B40;}
+  .ok{color:#2E6B40;font-weight:600;} .bad{color:#8A4B4B;font-weight:600;}
+  .mini{font-size:12.5px;color:var(--muted);}
+  @media print {
+    body{padding:0;font-size:14.5px;}
+    h2{break-before:page;break-after:avoid;}
+    h1{break-after:avoid;}
+    h3,h4{break-after:avoid;}
+    .card,.cita,pre{break-inside:avoid;}
+    table{break-inside:auto;}
+    tr,td,th{break-inside:avoid;}
+    .kicker,.parte{break-after:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Capacitación Alcance · App ToDo · Clase 15 (martes 22/9)</p>
+  <h1>Comparación: app ToDo vanilla JS → React</h1>
+  <p class="mini">Lo que pidió Leo: «que compares lo que tenés en un branch con otro, para que te des cuenta
+  que cambia el código». Este documento es esa comparación, lista para explicar en clase ·
+  analogía de la cocina: misma receta, misma cocina, cambió el CUADERNO donde se anota (DOM a mano → componentes)</p>
+
+  <!-- ===================================================================== -->
+  <span class="parte">Parte 1</span>
+  <h2>Los dos branches</h2>
+  <table>
+    <tr><th>Branch</th><th>Qué contiene</th><th>Cómo se ve</th></tr>
+    <tr><td><code>feature/clase13-dto-comentarios</code><br><span class="mini">commit 4c606a9</span></td><td>La app aprobada: <code>backend/</code> (Express) + <code>frontend/</code> (HTML/CSS/JS vanilla)</td><td>Servidor estático o doble clic en <code>index.html</code></td></tr>
+    <tr><td><code>feature/react</code><br><span class="mini">commit 5388bdc</span></td><td><b>El mismo backend</b> + <code>frontend-react/</code> (Vite + React 19 + TS + Router 7)</td><td><code>npm run dev</code> → http://localhost:5173</td></tr>
+  </table>
+  <div class="card">
+    <p>👉 <b>Regla de oro:</b> el backend NO se tocó. Misma API, misma base, mismos estilos. Solo cambió la
+    capa de la vista — que es exactamente lo que Leo quería que veas.</p>
+  </div>
+
+  <h3>Cómo correr cada versión</h3>
+  <pre><span class="k">Vanilla</span>  <span class="c">(branch feature/clase13-dto-comentarios)</span>
+cd backend && npm start          <span class="c"># API en :3000 — igual en las dos</span>
+frontend/index.html              <span class="c"># con servidor estático</span>
+
+<span class="k">React</span>   <span class="c">(branch feature/react)</span>
+cd backend && npm start          <span class="c"># API en :3000 (idéntico)</span>
+cd frontend-react && npm run dev <span class="c"># app en :5173 — el proxy de Vite</span>
+                                 <span class="c"># manda /api → :3000 (sin CORS, sin URLs absolutas)</span></pre>
+
+  <!-- ===================================================================== -->
+  <span class="parte">Parte 2</span>
+  <h2>El antes y el después, archivo por archivo</h2>
+  <table>
+    <tr><th>Vanilla (<code>frontend/</code>)</th><th>React (<code>frontend-react/src/</code>)</th><th>Qué pasó</th></tr>
+    <tr><td><code>index.html</code> + <code>tarea.html</code><br><span class="mini">2 páginas, ?id= en la URL</span></td><td><code>main.tsx</code> + <code>App.tsx</code><br><span class="mini">1 página, 3 rutas: / · /tareas/:id · *</span></td><td>Las páginas ya no son archivos: son <b>rutas</b> (SPA — el <code>&lt;div id="root"&gt;</code> vacío que mostró Leo)</td></tr>
+    <tr><td><code>js/model.js</code> (117 líneas)</td><td><code>api.ts</code></td><td><b>Casi no cambió:</b> mismas funciones, verbos y errores. Solo URL relativa (proxy) + ahora devuelve <b>tipos</b></td></tr>
+    <tr><td><code>js/view.js</code> (158 líneas)</td><td><code>componentes/</code> (TarjetaTarea, ChipEstatus, TarjetaComentario, Iconos)</td><td><code>pintarLista/pintarDetalle/pintarComentarios</code> (innerHTML con template literals) → <b>componentes</b>: funciones que retornan JSX</td></tr>
+    <tr><td><code>js/controller.js</code> (192 líneas)</td><td><code>paginas/PaginaLista.tsx</code></td><td>El director de eventos (addEventListener, editandoId, getElementById) → <b>estado + hooks</b> y el HTML de la página vive en el componente</td></tr>
+    <tr><td><code>js/detalle.js</code> (137 líneas)</td><td><code>paginas/PaginaDetalle.tsx</code></td><td>Igual: <code>URLSearchParams</code> → <code>useParams()</code>; <code>ocultarSecciones()</code> → render condicional</td></tr>
+    <tr><td>—</td><td><code>tipos.ts</code></td><td><b>Nuevo:</b> TypeScript define la forma de Tarea/Comentario (el mismo contrato del backend, del lado del front)</td></tr>
+    <tr><td>—</td><td><code>PaginaNoEncontrada.tsx</code></td><td><b>Nuevo:</b> la ruta <code>*</code> — en vanilla no había 404 en el front</td></tr>
+  </table>
+
+  <!-- ===================================================================== -->
+  <span class="parte">Parte 3</span>
+  <h2>Lo que DESAPARECIÓ (el punto de Leo)</h2>
+  <table>
+    <tr><th>Herramienta vanilla</th><th>Reemplazo en React</th><th>Por qué</th></tr>
+    <tr><td><code>document.getElementById</code> / <code>querySelector</code></td><td><code>useState</code> + <code>value={...}</code></td><td>No se agarran cajitas: cada input es <b>controlado</b> por estado</td></tr>
+    <tr><td><code>innerHTML = '...'</code></td><td>JSX (<code>{tarea.nombre}</code>)</td><td>El HTML se escribe en el componente, no como string</td></tr>
+    <tr><td><code>escapeHtml()</code> (26 líneas manuales)</td><td><span class="ok">Nada — React escapa solo</span></td><td>La protección XSS que arreglamos en la auditoría viene <b>gratis</b></td></tr>
+    <tr><td><code>addEventListener</code> + delegación (<code>closest('button[data-accion]')</code>)</td><td><code>onSubmit</code>, <code>onClick</code>, <code>onChange</code></td><td>El evento se declara donde está el botón</td></tr>
+    <tr><td><code>classList.toggle('hidden')</code></td><td>Render condicional (<code>{tarea && ...}</code>)</td><td>Si no hay tarea, la sección no se dibuja</td></tr>
+    <tr><td><code>form.reset()</code> + <code>volcarEnFormulario()</code></td><td>Estado inicial + <code>key</code></td><td>Al cambiar la key React <b>recrea</b> el componente</td></tr>
+    <tr><td><code>btn.disabled = true</code> (anti doble-click)</td><td><code>enviando</code> (estado)</td><td>El botón se deshabilita mientras el estado diga "enviando"</td></tr>
+    <tr><td>El bug del aviso "No hay tareas" (innerHTML='' lo borraba)</td><td><span class="ok">No puede existir</span></td><td>Sin innerHTML: el aviso es render condicional</td></tr>
+    <tr><td><code>tarea.html?id=13</code> (recarga la página)</td><td><code>&lt;Link to="/tareas/13"&gt;</code></td><td>Navega SIN recargar (SPA)</td></tr>
+    <tr><td><code>URLSearchParams(location.search)</code></td><td><code>useParams()</code></td><td>La ruta ya trae el <code>:id</code></td></tr>
+  </table>
+
+  <!-- ===================================================================== -->
+  <span class="parte">Parte 4</span>
+  <h2>Lo que quedó IGUAL</h2>
+  <div class="card">
+    <p>• <b><code>backend/</code> completo</b> — ni una línea tocada (API, DB, DTO, PATCH, comentarios).</p>
+    <p>• <b><code>styles.css</code></b> — copiado tal cual (440 líneas); solo <code>class</code> → <code>className</code>.</p>
+    <p>• <b>El model (<code>api.ts</code>)</b> — las mismas 8 funciones de <code>model.js</code>.</p>
+    <p>• <b>El comportamiento:</b> filtros con default "Pendiente", PATCH por chip, autor en localStorage
+    (misma key <code>comentario-autor</code>), 404 oculta secciones, errores del backend en pantalla.</p>
+    <p>• <b>La base</b> (<code>tareas.db</code>) — ni una migración.</p>
+  </div>
+
+  <!-- ===================================================================== -->
+  <span class="parte">Parte 5</span>
+  <h2>Verificación y stack</h2>
+  <h3>Verificado el 20/9</h3>
+  <div class="card">
+    <p>✔ <code>npm run build</code> → TypeScript + Vite, <b>0 errores</b>.</p>
+    <p>✔ <code>npm run lint</code> → <b>0 warnings, 0 errores</b>.</p>
+    <p>✔ E2E contra la API (8/8): crear → PATCH estatus → GET detalle → 2 comentarios → borrar 1 → filtro → DELETE → limpieza.</p>
+    <p>✔ Render con Chrome headless: lista con datos reales (proxy OK) · detalle con 4 comentarios ·
+    tarea inexistente → "Tarea no encontrada" + secciones ocultas · ruta rara → "Ruta no encontrada".</p>
+  </div>
+  <h3>Stack instalado (el mismo de Iris)</h3>
+  <pre><span class="k">React</span> 19.3 + <span class="k">React Router</span> 7.18 + <span class="k">TypeScript</span> 6 + <span class="k">Vite</span> 8
+<span class="c">npm create vite@latest · react-router-dom · proxy /api → :3000 en vite.config.ts</span></pre>
+
+  <p class="mini" style="margin-top:16px;">Apoyos: transcript clase 14 (<code>_clases/17-09-26.txt</code>) · TAREAS.md · COMPARACION_VANILLA_REACT.md (el mismo contenido en markdown, en el repo)</p>
+
+</div>
+</body>
+</html>
